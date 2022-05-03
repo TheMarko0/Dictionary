@@ -137,11 +137,12 @@ class DictWork:
 
 
 class TextEdit:
-    def __init__(self, rootEdit, xx, yy):
-        f = Frame(rootEdit)
-        f.place(x=xx, y=yy)
+    def __init__(self, rootEdit):
+        f = LabelFrame(rootEdit)
+        f.pack(fill=tk.X)
+
         scroll = Scrollbar(f)
-        self.textEdit = Text(f, height=20, width=53, borderwidth=3, state='disabled', yscrollcommand=scroll.set)
+        self.textEdit = Text(f, height=20, bd=0, width=53, state='disabled', yscrollcommand=scroll.set)
         scroll.config(command=self.textEdit.yview)
         scroll.pack(side=RIGHT, fill=Y)
         self.textEdit.pack()
@@ -162,59 +163,65 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Dictionary")
-
-        ORIGINAL_DPI = 96.04726735598227
-        self.SCALE = self.winfo_fpixels('1i') / ORIGINAL_DPI
-        self.geometry(f'{self.scaled(500)}x{self.scaled(580)}')
-
         self.dictwork = DictWork("DicEngUkr.sl3")
+        self.resizable(0, 0)
         self.createWindow()
 
-    def scaled(self, original_width):
-        return int(original_width * self.SCALE)
-
-    def enter_only_digits(self, entry, action_type) -> bool:
-        if action_type == '1' and not entry.isdigit():
-            return False
-
-        return True
-
     def createWindow(self):
-        labelText1 = Label(self, text="Додати слово в словник або знайти слово у словнику")
-        labelText1.place(x=self.scaled(30), y=self.scaled(10))
+        group_0 = Frame(self)
+        group_0.pack(padx=4, pady=3)
 
-        Label1 = Label(self, text="Слово 1")
-        Label2 = Label(self, text="Слово 2")
-        Label1.place(x=self.scaled(30), y=self.scaled(50))
-        Label2.place(x=self.scaled(30), y=self.scaled(90))
+        group_1 = LabelFrame(group_0, text=" Додати слово в словник або знайти слово у словнику ")
+        group_1.pack(ipadx=3, ipady=2, pady=2, fill=tk.X)
 
-        Label1Del = Label(self, text="Введіть айді слова")
-        Label1Del.place(x=self.scaled(30), y=self.scaled(160))
+        group_1_1 = Frame(group_1)
+        group_1_1.pack(fill=tk.X, pady=2)
 
-        self.addWordTo1 = Entry(self, width=50)
-        self.addWordTo2 = Entry(self, width=50)
+        Label(group_1_1, text="Слово 1", width=7).pack(side=tk.LEFT)
+        self.addWordTo1 = Entry(group_1_1)
+        self.addWordTo1.pack(padx=5, fill=tk.X)
 
-        self.addWordTo1.place(x=self.scaled(110), y=self.scaled(50))
-        self.addWordTo2.place(x=self.scaled(110), y=self.scaled(90))
+        group_1_2 = Frame(group_1)
+        group_1_2.pack(fill=tk.X, pady=2)
+
+        Label(group_1_2, text="Слово 2", width=7).pack(side=tk.LEFT)
+        self.addWordTo2 = Entry(group_1_2)
+        self.addWordTo2.pack(padx=5, fill=tk.X)
+
+        group_1_3 = Frame(group_1)
+        group_1_3.pack(fill=tk.X, pady=2)
+        Label(group_1_3, text="", width=7).pack(side=tk.LEFT)
+
+        Button(group_1_3, text="Add", width=10, command=self.addWord).pack(padx=5, side=tk.LEFT)
+        Label(group_1_3, text="", width=2).pack(side=tk.LEFT)
+
+        Button(group_1_3, text="Find", width=10, command=self.getWord).pack(padx=5, side=tk.LEFT)
+        Label(group_1_3, text="", width=2).pack(side=tk.LEFT)
+
+        Button(group_1_3, text="Show All", width=10, command=self.showAllWord).pack(padx=5, side=tk.LEFT)
+
+        group_2 = LabelFrame(group_0, text=" Видалити слово ")
+        group_2.pack(ipadx=3, ipady=2, pady=2, fill=tk.X)
+
+        group_2_1 = Frame(group_2)
+        group_2_1.pack(fill=tk.X)
+
+        Label(group_2_1, text="Введіть ID", width=9).pack(side=tk.LEFT)
 
         vcmd = (self.register(self.enter_only_digits), '%P', '%d')
-        self.delword1 = Entry(self, width=50, validate='key', validatecommand=vcmd)
-        self.delword1.place(x=self.scaled(140), y=self.scaled(160))
+        self.delword1 = Entry(group_2_1, validate='key', validatecommand=vcmd)
+        self.delword1.pack(padx=5, fill=tk.X)
 
-        self.textedit = TextEdit(self, self.scaled(30), self.scaled(225))
+        group_2_2 = Frame(group_2)
+        group_2_2.pack(fill=tk.X)
 
-        # buttons
-        Button(self, text="Add", width=10, command=self.addWord).place(x=self.scaled(30), y=self.scaled(120))
+        Label(group_2_2, text="", width=9).pack(side=tk.LEFT)
+        Button(group_2_2, text="Delete", width=10, command=self.deleteWord).pack(padx=5, pady=3, side=tk.LEFT)
+        Button(group_2_2, text="Delete All", width=10, command=self.deleteAll).pack(padx=5, pady=3, side=tk.RIGHT)
 
-        Button(self, text="Find", width=10, command=self.getWord).place(x=self.scaled(120), y=self.scaled(120))
+        self.textedit = TextEdit(group_0)
 
-        Button(self, text="Delete", width=10, command=self.deleteWord).place(x=self.scaled(30), y=self.scaled(190))
-
-        Button(self, text="Show All", width=10, command=self.showAllWord).place(x=self.scaled(120), y=self.scaled(190))
-
-        Button(self, text="Delete All", width=10, command=self.deleteAll).place(x=self.scaled(380), y=self.scaled(190))
-
-    def showAllWord(self, bAll=True):
+    def showAllWord(self):
         self.textedit.clear()
         res = self.dictwork.get_word("", 'All')
         if self.dictwork.get_word("", 'All'):
@@ -224,7 +231,6 @@ class App(tk.Tk):
             self.textedit.writeln("Словник пустий!")
 
     def getWord(self, bAll=True):
-        self.addWordTo2.delete(0, END)
         self.textedit.clear()
         text = self.addWordTo1.get()
         if text != '':
@@ -259,25 +265,38 @@ class App(tk.Tk):
     def deleteWord(self):
         self.textedit.clear()
 
+        textID = None
         try:
-            textid = int(self.delword1.get())
+            textID = int(self.delword1.get())
         except:
             self.textedit.writeln(f"Помилка! Введіть числом номер слова!")
             return
 
-        if not self.dictwork.get_wordById(textid) or self.dictwork.del_word(textid) < 0:
-            self.textedit.writeln(f"Помилка! Не вдалося витерти слово з номером: '{textid}'!")
+        if not self.dictwork.get_wordById(textID) or self.dictwork.del_word(textID) < 0:
+            self.textedit.writeln(f"Помилка! Не вдалося видалити слово з номером: '{textID}'!")
         else:
-            self.textedit.writeln(f"Cлово з номером: '{textid}' видалено!")
+            self.textedit.writeln(f"Cлово з номером: '{textID}' видалено!")
             self.delword1.delete(0, END)
 
     def deleteAll(self):
         self.textedit.clear()
-        msg_box = messagebox.askquestion("Delete all data", "Ви справді хочете видалити всі дані?")
-        if msg_box == 'yes':
+        MsgBox = messagebox.askquestion("Delete all data", "Ви справді хочете видалити всі дані?")
+        if MsgBox == 'yes':
             self.dictwork.droop_all()
             self.textedit.writeln("Cловик видалений!")
+
+    def enter_only_digits(self, entry, action_type):
+        if action_type == '1' and not entry.isdigit():
+            return False
+
+        return True
 
 
 app = App()
 app.mainloop()
+
+
+
+
+
+
