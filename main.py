@@ -171,20 +171,20 @@ class App(tk.Tk):
         group_0 = Frame(self)
         group_0.pack(padx=4, pady=3)
 
-        group_1 = LabelFrame(group_0, text=" Додати слово в словник або знайти слово у словнику ")
+        group_1 = LabelFrame(group_0, text=" Add word to dictionary or find word in it ")
         group_1.pack(ipadx=3, ipady=2, pady=2, fill=tk.X)
 
         group_1_1 = Frame(group_1)
         group_1_1.pack(fill=tk.X, pady=2)
 
-        Label(group_1_1, text="Слово 1", width=7).pack(side=tk.LEFT)
+        Label(group_1_1, text="1 word", width=7).pack(side=tk.LEFT)
         self.addWordTo1 = Entry(group_1_1)
         self.addWordTo1.pack(padx=5, fill=tk.X)
 
         group_1_2 = Frame(group_1)
         group_1_2.pack(fill=tk.X, pady=2)
 
-        Label(group_1_2, text="Слово 2", width=7).pack(side=tk.LEFT)
+        Label(group_1_2, text="2 word", width=7).pack(side=tk.LEFT)
         self.addWordTo2 = Entry(group_1_2)
         self.addWordTo2.pack(padx=5, fill=tk.X)
 
@@ -200,13 +200,13 @@ class App(tk.Tk):
 
         Button(group_1_3, text="Show All", width=10, command=self.showAllWord).pack(padx=5, side=tk.LEFT)
 
-        group_2 = LabelFrame(group_0, text=" Видалити слово ")
+        group_2 = LabelFrame(group_0, text=" Delete word ")
         group_2.pack(ipadx=3, ipady=2, pady=2, fill=tk.X)
 
         group_2_1 = Frame(group_2)
         group_2_1.pack(fill=tk.X)
 
-        Label(group_2_1, text="Введіть ID", width=9).pack(side=tk.LEFT)
+        Label(group_2_1, text="Enter ID", width=9).pack(side=tk.LEFT)
 
         vcmd = (self.register(self.enter_only_digits), '%P', '%d')
         self.delword1 = Entry(group_2_1, validate='key', validatecommand=vcmd)
@@ -228,7 +228,7 @@ class App(tk.Tk):
             for id, l1Word, l2Word in res[::-1]:
                 self.textedit.writeln(f"{id}:{l1Word}:{l2Word}")
         else:
-            self.textedit.writeln("Словник пустий!")
+            self.textedit.writeln("Dictionary is clear!")
 
     def getWord(self, bAll=True):
         self.textedit.clear()
@@ -239,26 +239,26 @@ class App(tk.Tk):
                 res = self.dictwork.get_word(text, '2')
 
             if not res:
-                self.textedit.writeln(f"Помилка! Слова '{text}' не знайдено у словнику!")
+                self.textedit.writeln(f"Error! Word '{text}' wasn't found in dictionary!")
             else:
                 for id, l1Word in res[::-1]:
                     self.textedit.writeln(f"{id}:{l1Word}")
                 self.addWordTo1.delete(0, END)
         else:
-            self.textedit.writeln("Введіть слово 1")
+            self.textedit.writeln("Enter 1 word")
 
     def addWord(self):
         self.textedit.clear()
         text1 = self.addWordTo1.get()
         text2 = self.addWordTo2.get()
         if text1 == '' or text2 == '':
-            self.textedit.writeln(f"Помилка! Введіть обидва слова!")
+            self.textedit.writeln(f"Error! Enter both word!")
             return
 
         if self.dictwork.set_word(text1, text2) < 0:
-            self.textedit.writeln(f"Помилка! Слова '{text1}':'{text2}' не додалися у словник!")
+            self.textedit.writeln(f"Error! Words '{text1}':'{text2}' cant add to dictionary!")
         else:
-            self.textedit.writeln(f"Слова '{text1}':'{text2}' додані у словник!")
+            self.textedit.writeln(f"Words '{text1}':'{text2}' added to dictionary!")
             self.addWordTo1.delete(0, END)
             self.addWordTo2.delete(0, END)
 
@@ -269,21 +269,21 @@ class App(tk.Tk):
         try:
             textID = int(self.delword1.get())
         except:
-            self.textedit.writeln(f"Помилка! Введіть числом номер слова!")
+            self.textedit.writeln(f"Error! Enter digit id word")
             return
 
         if not self.dictwork.get_wordById(textID) or self.dictwork.del_word(textID) < 0:
-            self.textedit.writeln(f"Помилка! Не вдалося видалити слово з номером: '{textID}'!")
+            self.textedit.writeln(f"Error! Cant delete word with id '{textID}'!")
         else:
-            self.textedit.writeln(f"Cлово з номером: '{textID}' видалено!")
+            self.textedit.writeln(f"Word with number: '{textID}' deleted!")
             self.delword1.delete(0, END)
 
     def deleteAll(self):
         self.textedit.clear()
-        MsgBox = messagebox.askquestion("Delete all data", "Ви справді хочете видалити всі дані?")
+        MsgBox = messagebox.askquestion("Delete all data", "You really want to delete all data?")
         if MsgBox == 'yes':
             self.dictwork.droop_all()
-            self.textedit.writeln("Cловик видалений!")
+            self.textedit.writeln("Dictionary is cleared")
 
     def enter_only_digits(self, entry, action_type):
         if action_type == '1' and not entry.isdigit():
@@ -294,9 +294,4 @@ class App(tk.Tk):
 
 app = App()
 app.mainloop()
-
-
-
-
-
 
